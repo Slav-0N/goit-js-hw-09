@@ -5,7 +5,8 @@ let itogo;
 let runCountdownId;
 const startBtn = document.querySelector('button');
 let data;
-let secondsThen;
+let secondsThen = 0;
+let secondsNow = 0;
 
 const options = {
   enableTime: true,
@@ -13,67 +14,51 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
+    //  const totalSeconds - визначає різницю між поточним часом і часом що обрав юзер, виключно для  блоку if...else (щоб визначити, чи є обрана дата - датаю в майбутньму). Не використовується при обчисленні показників таймера. 
+    secondsThen = selectedDates[0];   
+    const totalSeconds = secondsThen - Date.now();
     
-    const secondsNow = Math.floor(options.defaultDate);
-    secondsThen = Math.floor(selectedDates[0]);
-    console.log('secondsNow=', secondsNow);
-    console.log('secondsThen=', secondsThen);
-    const itogo1 = secondsThen - secondsNow;
-    console.log('itogo=', itogo1);
-    
-    if (itogo1 < 0) {
-
-      // alert('Please choose a date in the future');
+    if (totalSeconds < 0) {
       Notiflix.Notify.failure('Please choose a date in the future');
     } else {
       startBtn.removeAttribute('disabled');
       startBtn.addEventListener('click', runCountdown);
-    
     };
   },
 };
+
+
+
 
 startBtn.setAttribute('disabled', '');
 flatpickr("#datetime-picker", options);
 
 function runCountdown() {
-  console.log('You pushed START button!');
-  
+  startBtn.setAttribute('disabled', '');
+  startBtn.previousElementSibling.setAttribute('disabled', '');
   data = setInterval(setScreenData, 1000);
-
 };
 
 function setScreenData() {
-  const day = Date.now();
-  itogo = secondsThen - day;
-  console.log(data);
-  console.log(itogo);
+  // const dayNow - визначає поточний час для обчислення показників лічильника зворотнього відліку в реальному часі, після натискання на кнопку "Start".
+  const dayNow = Date.now();
+  leftTime = secondsThen - dayNow;
 
-  if (itogo < 1000) {
+  if (leftTime < 1000) {
     clearInterval(data);
+    startBtn.previousElementSibling.removeAttribute('disabled');
   }
-  let { days, hours, minutes, seconds } = convertMs(itogo);
+  let { days, hours, minutes, seconds } = convertMs(leftTime);
   const daysEl = document.querySelector('[data-days]');
   const hoursEl = document.querySelector('[data-hours]');
   const minutesEl = document.querySelector('[data-minutes]');
   const secondsEl = document.querySelector('[data-seconds]');
 
-  daysEl.textContent = days <hours ? addLeadingZero(days) : days;
-  hoursEl.textContent = hours < 10 ? addLeadingZero(hours) : hours;
-  minutesEl.textContent = minutes < 10 ? addLeadingZero(minutes) : minutes;
-  secondsEl.textContent = seconds < 10 ? addLeadingZero(seconds) : seconds;
+  daysEl.textContent = days.toString().padStart(2, "0");
+  hoursEl.textContent = hours.toString().padStart(2, "0");
+  minutesEl.textContent = minutes.toString().padStart(2, "0");
+  secondsEl.textContent = seconds.toString().padStart(2, "0");
 };  
-
-function addLeadingZero(value) {
-  if (value < 10) {
-    return `0${value}`;
-  }
-}
-  
-
-
-
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
