@@ -42,7 +42,7 @@ function runCountdown() {
 function setScreenData() {
   // const dayNow - визначає поточний час для обчислення показників лічильника зворотнього відліку в реальному часі, після натискання на кнопку "Start".
   const dayNow = Date.now();
-  leftTime = secondsThen - dayNow;
+  let leftTime = secondsThen - dayNow;
 
   if (leftTime < 1000) {
     clearInterval(data);
