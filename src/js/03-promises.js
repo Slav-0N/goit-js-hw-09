@@ -11,7 +11,7 @@ import Notiflix from 'notiflix';
 const formEl = document.querySelector('.form');
 
 formEl.addEventListener('submit', onStart);
-
+let promisEl;
 
 
 function onStart(event) {
@@ -24,7 +24,7 @@ function onStart(event) {
      You managed to enter incorrectly all the parameters at the same time. :-)`);
     return
   } else if (Number(delay.value) < 0 || Number(step.value) < 0) {
-    Notiflix.Notify.failure(`"First delay" and "Delay step" parameters must be positive and negative numbers`);
+    Notiflix.Notify.failure(`"First delay" and/or "Delay step" parameters must be positive and negative numbers`);
     return
   } else if (Number(amount.value) <= 0) {
     Notiflix.Notify.failure(`Amount parameter must be greater than zero`);
